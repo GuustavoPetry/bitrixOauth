@@ -1,0 +1,4 @@
+Utilize LocalTunnel para export LocalHost em uma URL Pública:
+    - npm install -g localtunnel
+
+    - lt --port 3000 --subdomain meuapp
