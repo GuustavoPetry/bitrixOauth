@@ -2,7 +2,7 @@ require("dotenv").config();
 const { exchangeCodeForToken, refreshTokens } = require("../services/bitrixService");
 const Token = require("../models/tokenModel");
 
-const { CLIENT_ID, BITRIX_PORTAL } = process.env;
+const { CLIENT_ID, BITRIX_PORTAL, REDIRECT_URI } = process.env;
 
 exports.startAuth = (req, res) => {
     if (!CLIENT_ID || !BITRIX_PORTAL) {
@@ -10,11 +10,10 @@ exports.startAuth = (req, res) => {
         return res.status(500).send("Configuração incompleta do .env");
     }
 
-    const redirectUri = process.env.REDIRECT_URI;
     const state = Math.random().toString(36).slice(2);
     req.session.oauth_state = state;
 
-    const authUrl = `${BITRIX_PORTAL}/oauth/authorize?client_id=${encodeURIComponent(CLIENT_ID)}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+    const authUrl = `${BITRIX_PORTAL}/oauth/authorize?client_id=${encodeURIComponent(CLIENT_ID)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${state}`;
     res.redirect(authUrl);
 };
 
@@ -25,8 +24,7 @@ exports.handleCallback = async (req, res) => {
             return res.status(400).send("State inválido ou Code ausente");
         }
 
-        const redirectUri = process.env.REDIRECT_URI;
-        const tokens = await exchangeCodeForToken(code, redirectUri);
+        const tokens = await exchangeCodeForToken(code, REDIRECT_URI);
 
         await Token.saveTokens(tokens);
 
