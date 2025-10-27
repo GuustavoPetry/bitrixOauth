@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { exchangeCodeForToken, refreshTokens } = require("../services/bitrixService");
+const { exchangeCodeForToken, refreshTokens } = require("../services/authService");
 const Token = require("../models/tokenModel");
 
 const { CLIENT_ID, BITRIX_PORTAL, REDIRECT_URI } = process.env;
